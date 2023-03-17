@@ -3,6 +3,10 @@ package cs301.Soccer;
 import android.util.Log;
 import cs301.Soccer.soccerPlayer.SoccerPlayer;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.*;
 
 /**
@@ -118,8 +122,14 @@ public class SoccerDatabase implements SoccerDB {
             return database.size();
         }
         else{
-            
-            return -1;
+            int count = 0;
+            Enumeration<String> players = database.keys();
+            while(players.hasMoreElements()){
+                if(database.get(players.nextElement()).getTeamName().equals(teamName)){
+                    count++;
+                }
+            }
+            return count;
         }
     }
 
@@ -131,6 +141,30 @@ public class SoccerDatabase implements SoccerDB {
     // get the nTH player
     @Override
     public SoccerPlayer playerIndex(int idx, String teamName) {
+        if(idx > numPlayers(teamName)){
+            return null;
+        }
+        else{
+            Enumeration<String> players = database.keys();
+            for(int i =0; i< idx; i++){
+                players.nextElement();
+            }
+            if(teamName == null){
+                while(players.hasMoreElements()){
+                    return database.get(players.nextElement());
+                }
+            }
+            else{
+                while(players.hasMoreElements()){
+                    if(database.get(players.nextElement()).getTeamName().equals(teamName)){
+                        return database.get(players.nextElement());
+                    }
+                    else
+                        players.nextElement();
+                }
+
+            }
+        }
         return null;
     }
 
@@ -153,7 +187,29 @@ public class SoccerDatabase implements SoccerDB {
     // write data to file
     @Override
     public boolean writeData(File file) {
-        return false;
+
+        try {
+            FileWriter fw = new FileWriter(file);
+            PrintWriter pw = new PrintWriter(fw);
+            Enumeration<String> players = database.keys();
+            while (players.hasMoreElements()) {
+                String key = players.nextElement();
+                pw.println(logString(database.get(key).getFirstName()));
+                pw.println(logString(database.get(key).getLastName()));
+                pw.println(logString(database.get(key).getTeamName()));
+                pw.println(logString(Integer.toString(database.get(key).getUniform())));
+                pw.println(logString(Integer.toString(database.get(key).getGoals())));
+                pw.println(logString(Integer.toString(database.get(key).getYellowCards())));
+                pw.println(logString(Integer.toString(database.get(key).getRedCards())));
+            }
+            pw.close();
+            return true;
+
+        }
+        catch(Exception e){
+            return false;
+        }
+
     }
 
     /**
