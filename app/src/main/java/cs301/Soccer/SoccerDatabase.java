@@ -176,7 +176,34 @@ public class SoccerDatabase implements SoccerDB {
     // read data from file
     @Override
     public boolean readData(File file) {
-        return file.exists();
+        try{
+            Scanner scanner = new Scanner(file);
+            while(scanner.hasNext()){
+                String firstName = scanner.nextLine();
+                String lastName = scanner.nextLine();
+                String teamName = scanner.nextLine();
+                int uniform = Integer.parseInt(scanner.nextLine());
+                int goals = Integer.parseInt(scanner.nextLine());
+                int yellowCards = Integer.parseInt(scanner.nextLine());
+                int redCards = Integer.parseInt(scanner.nextLine());
+                SoccerPlayer sp = new SoccerPlayer(firstName, lastName, uniform,teamName);
+                for(int i = 0; i < goals; i++){
+                    sp.bumpGoals();
+                }
+                for(int i = 0; i < yellowCards; i++){
+                    sp.bumpYellowCards();
+                }
+                for(int i = 0; i < redCards; i++){
+                    sp.bumpRedCards();
+                }
+                removePlayer(firstName, lastName);
+                addPlayer(firstName, lastName, uniform, teamName);
+            }
+        }
+        catch(FileNotFoundException e){
+            return false;
+        }
+        return true;
     }
 
     /**
@@ -216,7 +243,7 @@ public class SoccerDatabase implements SoccerDB {
      * @return the string s, unchanged
      */
     private String logString(String s) {
-        Log.i("write string", s);
+//        Log.i("write string", s);
         return s;
     }
 
@@ -228,7 +255,12 @@ public class SoccerDatabase implements SoccerDB {
     // return list of teams
     @Override
     public HashSet<String> getTeams() {
-        return new HashSet<String>();
+        HashSet<String> teams = new HashSet<String>();
+        Enumeration<String> list = database.keys();
+        while(list.hasMoreElements()){
+            teams.add(database.get(list.nextElement()).getTeamName());
+        }
+        return teams;
     }
 
     /**
