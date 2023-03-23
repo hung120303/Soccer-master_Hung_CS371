@@ -187,9 +187,13 @@ public class SoccerDatabase implements SoccerDB {
     // write data to file
     @Override
     public boolean writeData(File file) {
-
-        try {
-            FileWriter fw = new FileWriter(file);
+        FileWriter fw = null;
+        try{
+            fw = new FileWriter(file);
+        }
+        catch(IOException e){
+            return false;
+        }
             PrintWriter pw = new PrintWriter(fw);
             Enumeration<String> players = database.keys();
             while (players.hasMoreElements()) {
@@ -204,12 +208,6 @@ public class SoccerDatabase implements SoccerDB {
             }
             pw.close();
             return true;
-
-        }
-        catch(Exception e){
-            return false;
-        }
-
     }
 
     /**

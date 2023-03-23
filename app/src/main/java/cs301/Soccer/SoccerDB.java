@@ -113,7 +113,7 @@ public interface SoccerDB {
      * @param file the object that denotes the file to write to
      * @return true iff the operation was successful
      */
-    public boolean writeData(File file) throws FileNotFoundException;
+    public boolean writeData(File file);
 
     /**
      * Returns the set of teams for all the players in the database.
